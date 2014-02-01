@@ -1,6 +1,9 @@
 #start {
   margin-top: 9px;
 }
+#start-countdown {
+	padding-left: 10px;
+}
 .navbar-inverse .navbar-brand {
   padding-top: 13px;
   color: #E0E0E0;
@@ -9,4 +12,7 @@
   margin-top: 50px;
   min-height: 100%; 
   max-height: 100%; 
+}
+.selected-basemap {
+	font-weight: bolder;
 }

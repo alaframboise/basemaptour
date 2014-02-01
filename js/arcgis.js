@@ -2,7 +2,7 @@
 require(["esri/map", "esri/dijit/Scalebar", "http://esri.github.io/bootstrap-map-js/src/js/bootstrapmap.js", "dojo/domReady!"], 
   function(Map, Scalebar, BootstrapMap) {
     var mapLocations, timerHandle, secTimer;
-    var index = 0, sec = 1, t = 5000, playing = false;
+    var index = 0, countDown = 5, sec = countDown, t = countDown*1000, playing = false;
     var map = new Map("mapDiv",{
       basemap:"national-geographic",
       center:[-122.45,37.77],
@@ -13,38 +13,47 @@ require(["esri/map", "esri/dijit/Scalebar", "http://esri.github.io/bootstrap-map
       map: map,
       scalebarUnit: "dual"
     });
-    map.on("update-end", function() {
+    map.on("update-end", function(e) {
       if (playing) {
         nextMap(false);
       }
     });
+    map.on("basemap-change", function(e) {
+      updateBasemapUI(e.current.basemapName);
+    });
+    // Functions
+    function updateBasemapUI(basemapType) {
+      $("#navbar > li > a").removeClass("selected-basemap");
+      $("#navbar > li > a[data-basemap='" + basemapType + "']").addClass("selected-basemap");
+    }
+    function showCountdown(secondsLeft) {
+      secondsLeft===""?$("#start-countdown").hide():$("#start-countdown").show();
+      $("#start-countdown").text("" + secondsLeft);
+    }
     function nextMap(startUp) {
       clearInterval(secTimer);
-       if (startUp) {
-         $("#start").html('<span id="start-glyph" class="glyphicon glyphicon-play"></span> '+sec); // updated immediately
+      if (startUp) {
+        showCountdown(sec); // updated immediately
       }
       secTimer = setInterval (function() {
-        sec++;
-        if (sec < 6) {
-          $("#start").html('<span id="start-glyph" class="glyphicon glyphicon-play"></span> '+sec);
-        } else {
-          //clearInterval(secTimer);
+        sec--;
+        if (sec == 0) {
           index = (index < (mapLocations.length - 1) ? (index + 1) : 0);
           showBasemap(index, true);
-          sec = 0;
+          sec = countDown;
         }
+        showCountdown(sec);
       }, 1000);
     }
-    function playTour() {
+    function toggleTour() {
+      $("#start-glyph").toggleClass("glyphicon-pause glyphicon-play"); 
       clearInterval(secTimer);
-      if (!playing) { 
+      if (!playing) {
         nextMap(true);
       }
       playing = !playing;
     }
-    // Functions
     function initBasemaps() {
-      index = 0;
       mapLocations = [
         ["gray",[-100,45],3], /* World*/ ["streets",[-0.13,51.50],11], // London
         ["hybrid",[151.21,-33.87],14], /* Sydney */ ["topo",[-77.017,38.943],17], // D.C.
@@ -54,45 +63,29 @@ require(["esri/map", "esri/dijit/Scalebar", "http://esri.github.io/bootstrap-map
         ["national-geographic",[-74,40.74],12], /* New York */ ["oceans",[-160,30],3] // Pacific
       ];        
     }
-    function setBasemap(type) { // Disable playmode
-     clearInterval(timerHandle);
-     map.setBasemap(type);
+    function setBasemap(basemapType) { // Disable playmode
+      clearInterval(secTimer);
+      map.setBasemap(basemapType);
     }
     function showBasemap(index,moveLocation) { // set map and location
-      map.setBasemap(mapLocations[index][0]);
+      setBasemap(mapLocations[index][0]);
       if (moveLocation) {
         map.centerAndZoom(mapLocations[index][1],mapLocations[index][2]);
       }
     }
-    function move(forward) {
-      var i = index;
-      if (forward) {
-       index = index < (mapLocations.length - 1) ? (index + 1) : index;
-      } else {
-         index = index > 0 ? (index - 1) : 0;
-      }
-      if (i != index) {
-       showBasemap(index,true);
-      }
-    }
-  
-  // Bootstrap stuff
-   $(document).ready(function(){
+    // Bootstrap stuff
+    $(document).ready(function() {
       initBasemaps();
+      updateBasemapUI($("#mapDiv").data("basemap"));
       $("#navbar li").click(function(e) {
-        map.setBasemap(e.target.dataset.basemap);
+        if (playing) toggleTour();
+        setBasemap(e.target.dataset.basemap);
         if ($(".navbar-collapse.in").length > 0) {
           $(".navbar-toggle").click();
         }
       });
     $("#start").click(function(){
-      var span = $("#start-glyph");
-      if (!playing) {
-        span.toggleClass('glyphicon-pause glyphicon-play'); 
-      } else {
-        span.toggleClass('glyphicon-play glyphicon-pause');
-      }
-      playTour();
+      toggleTour();
     });
   });
 });
