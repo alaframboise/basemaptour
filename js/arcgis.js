@@ -21,12 +21,12 @@ require(["esri/map", "esri/dijit/Scalebar", "http://esri.github.io/bootstrap-map
     function nextMap(startUp) {
       clearInterval(secTimer);
        if (startUp) {
-         $("#start").html('<span id="start-glyph"class="glyphicon glyphicon-play"></span> '+sec); // updated immediately
+         $("#start").html('<span id="start-glyph" class="glyphicon glyphicon-play"></span> '+sec); // updated immediately
       }
       secTimer = setInterval (function() {
         sec++;
         if (sec < 6) {
-          $("#start").html('<span id="start-glyph"class="glyphicon glyphicon-play"></span> '+sec);
+          $("#start").html('<span id="start-glyph" class="glyphicon glyphicon-play"></span> '+sec);
         } else {
           //clearInterval(secTimer);
           index = (index < (mapLocations.length - 1) ? (index + 1) : 0);
@@ -80,26 +80,7 @@ require(["esri/map", "esri/dijit/Scalebar", "http://esri.github.io/bootstrap-map
    $(document).ready(function(){
       initBasemaps();
       $("#navbar li").click(function(e) {
-        switch (e.target.text) {
-          case "Streets":
-            map.setBasemap("streets");
-            break;
-          case "Satellite":
-            map.setBasemap("hybrid");
-            break;
-          case "National Geographic":
-            map.setBasemap("national-geographic");
-            break;
-          case "Topographic":
-            map.setBasemap("topo");
-            break;
-          case "Gray":
-            map.setBasemap("gray");
-            break;
-          case "Open Street Map":
-            map.setBasemap("osm");
-            break;
-        }
+        map.setBasemap(e.target.dataset.basemap);
         if ($(".navbar-collapse.in").length > 0) {
           $(".navbar-toggle").click();
         }
