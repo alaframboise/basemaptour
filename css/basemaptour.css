@@ -1,0 +1,12 @@
+#start {
+  margin-top: 9px;
+}
+.navbar-inverse .navbar-brand {
+  padding-top: 13px;
+  color: #E0E0E0;
+}
+#mapDiv {
+  margin-top: 50px;
+  min-height: 100%; 
+  max-height: 100%; 
+}
