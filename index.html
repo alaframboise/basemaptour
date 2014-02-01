@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -43,16 +42,17 @@
           </button>
           <a class="navbar-brand" href="index.html"><span class="glyphicon glyphicon-globe"></span>&nbsp;Basemap Tour</a>
           <button id="start" type="button" class="btn btn-success btn-sm pull-left">
-            <span id="start-glyph"class="glyphicon glyphicon-play"></span>
+            <span id="start-glyph" class="glyphicon glyphicon-play"/><span id="start-countdown" style="display: none"/>
           </button>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav" id="navbar">
-            <li><a href="#">Gray</a></li>
-            <li><a href="#">Streets</a></li>
-            <li><a href="#">Satellite</a></li>
-            <li><a href="#">Topographic</a></li>    
-            <li><a href="#">National Geographic</a></li>             
+            <li><a href="#" data-basemap="gray">Gray</a></li>
+            <li><a href="#" data-basemap="streets">Streets</a></li>
+            <li><a href="#" data-basemap="hybrid">Satellite</a></li>
+            <li><a href="#" data-basemap="topo">Topographic</a></li>    
+            <li><a href="#" data-basemap="national-geographic">National Geographic</a></li>
+            <li><a href="#" data-basemap="oceans">Oceans</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
