@@ -1,6 +1,6 @@
 /* Uses pre-existing library - http://github.com/esri/bootstrap-map-js */
-require(["esri/map", "esri/dijit/Scalebar", "http://esri.github.io/bootstrap-map-js/src/js/bootstrapmap.js", "dojo/domReady!"], 
-  function(Map, Scalebar, BootstrapMap) {
+require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", "http://esri.github.io/bootstrap-map-js/src/js/bootstrapmap.js", "dojo/domReady!"], 
+  function(Map, Scalebar, Geocoder, BootstrapMap) {
     var mapLocations = [
         ["gray",[-100,45],3], /* World*/ ["streets",[-0.13,51.50],11], // London
         ["hybrid",[151.21,-33.87],14], /* Sydney */ ["topo",[-77.017,38.943],17], // D.C.
@@ -20,6 +20,11 @@ require(["esri/map", "esri/dijit/Scalebar", "http://esri.github.io/bootstrap-map
       map: map,
       scalebarUnit: "dual"
     });
+    var geocoder = new Geocoder({ 
+          map: map,
+          autoComplete: true
+        }, "search");
+    geocoder.startup();
     map.on("update-end", function(e) {
       if (playing) {
         nextMap(false);
