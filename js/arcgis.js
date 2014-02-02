@@ -43,7 +43,9 @@ require(["esri/map", "esri/dijit/Scalebar", "http://esri.github.io/bootstrap-map
     function nextMap(startUp) {
       clearInterval(secTimer);
       if (startUp) { // updated immediately
-        showBasemap(index);
+        if (playing) {
+          showBasemap(index);
+        }
         showCountdown(sec); 
       }
       secTimer = setInterval (function() {
@@ -79,6 +81,7 @@ require(["esri/map", "esri/dijit/Scalebar", "http://esri.github.io/bootstrap-map
           toggleTour(); // Stop playing
         }
         setBasemap(e.target.parentElement.dataset.basemap); // Set the basemap
+        index = $("#navbar li").index($("#navbar li[data-basemap='" + e.target.parentElement.dataset.basemap +"']"));
         if ($(".navbar-collapse.in").length > 0) { // Hide if showing responsive menu
           $(".navbar-toggle").click();
         }
