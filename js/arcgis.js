@@ -11,19 +11,15 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", "http://esri.
       ];
     var index = 0, countDown = 5, sec = countDown, playing = false, secTimer;
     var map = new Map("mapDiv",{
-      basemap:"national-geographic",
-      center:[-122.45,37.77],
-      zoom:12
+      basemap:"national-geographic", center:[-122.45,37.77], zoom:12
     });
     BootstrapMap.bindTo(map);
     var scalebar = new Scalebar({
-      map: map,
-      scalebarUnit: "dual"
+      map: map, scalebarUnit: "dual"
     });
     var geocoder = new Geocoder({ 
-          map: map,
-          autoComplete: true
-        }, "search");
+      map: map, autoComplete: true
+    }, "search");
     geocoder.startup();
     map.on("update-end", function(e) {
       if (playing) {
@@ -36,7 +32,6 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", "http://esri.
     map.on("basemap-change", function(e) {
       updateBasemapUI(e.current.basemapName);
     });
-    // Functions
     function updateBasemapUI(basemapType) {
       $("#navbar li").removeClass("active");
       $("#navbar li[data-basemap='" + basemapType + "']").addClass("active");
@@ -79,7 +74,6 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", "http://esri.
       setBasemap(mapLocations[index][0]);
       map.centerAndZoom(mapLocations[index][1],mapLocations[index][2]);
     }
-    // Bootstrap stuff
     $(document).ready(function() {
       $("#navbar li").click(function(e) {
         if (playing) {
@@ -93,6 +87,12 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", "http://esri.
       });
       $("#start").click(function(){
         toggleTour();
+      });
+      $("#forward").click(function(e){
+        showBasemap(index = index === mapLocations.length - 1 ? 0 : index + 1);
+      });
+      $("#backward").click(function(e){
+        showBasemap(index = index === 0 ? mapLocations.length - 1 : index - 1);
       });
   });
 });

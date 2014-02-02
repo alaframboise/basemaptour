@@ -41,16 +41,22 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="index.html"><span class="glyphicon glyphicon-globe"></span>&nbsp;Map Tour</a>
+          <button id="backward" type="button" class="btn btn-success btn-sm pull-left">
+            <span id="backward-glyph" class="glyphicon glyphicon-backward"/>
+          </button>
           <button id="start" type="button" class="btn btn-success btn-sm pull-left">
             <span id="start-glyph" class="glyphicon glyphicon-play"/><span id="start-countdown" style="display: none"/>
           </button>
+          <button id="forward" type="button" class="btn btn-success btn-sm pull-left">
+            <span id="forward-glyph" class="glyphicon glyphicon-forward"/>
+          </button>  
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav" id="navbar">
             <li data-basemap="gray"><a href="#">Gray</a></li>
             <li data-basemap="streets"><a href="#">Streets</a></li>
             <li data-basemap="hybrid"><a href="#">Satellite</a></li>
-            <li data-basemap="topo"><a href="#">Topographic</a></li>    
+            <li data-basemap="topo"><a href="#">Topo</a></li>    
             <li data-basemap="national-geographic"><a href="#">Nat Geo</a></li>
             <li data-basemap="oceans"><a href="#">Oceans</a></li>
           </ul>

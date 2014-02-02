@@ -1,6 +1,11 @@
-#start {
+#start,  #backward {
   margin-top: 9px;
+  margin-right: 3px;
 }
+#forward {
+	margin-top: 9px;
+}
+
 #start-countdown {
 	padding-left: 10px;
 }
