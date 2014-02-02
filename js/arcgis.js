@@ -10,6 +10,7 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", "http://esri.
         ["national-geographic",[-74,40.74],12], /* New York */ ["oceans",[-160,30],3] // Pacific
       ];
     var index = 0, countDown = 5, sec = countDown, playing = false, secTimer;
+    // Map
     var map = new Map("mapDiv",{
       basemap:"national-geographic", center:[-122.45,37.77], zoom:12
     });
@@ -32,6 +33,7 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", "http://esri.
     map.on("basemap-change", function(e) {
       updateBasemapUI(e.current.basemapName);
     });
+    // Functions
     function updateBasemapUI(basemapType) {
       $("#navbar li").removeClass("active");
       $("#navbar li[data-basemap='" + basemapType + "']").addClass("active");
