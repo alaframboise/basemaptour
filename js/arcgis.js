@@ -1,5 +1,6 @@
 /* Uses pre-existing library - http://github.com/esri/bootstrap-map-js */
-require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", "http://esri.github.io/bootstrap-map-js/src/js/bootstrapmap.js", "dojo/domReady!"], 
+require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", 
+  "http://esri.github.io/bootstrap-map-js/src/js/bootstrapmap.js", "dojo/domReady!"], 
   function(Map, Scalebar, Geocoder, BootstrapMap) {
     var mapLocations = [
         ["gray",[-100,45],3], /* World*/ ["streets",[-0.13,51.50],11], // London
@@ -9,23 +10,13 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", "http://esri.
         ["hybrid",[-77.65,24.20],9], /* Bahamas */ ["topo",[139.75,35.69],17], // Tokyo
         ["national-geographic",[-74,40.74],12], /* New York */ ["oceans",[-160,30],3] // Pacific
       ];
-    var index = 0, countDown = 5, sec = countDown, playing = false, secTimer;
+    var index = 0, countDown = 5, sec = countDown, playing = false, played = false, secTimer;
     // Map
     var map = new Map("mapDiv",{
       basemap:"national-geographic", center:[-122.45,37.77], zoom:12
     });
-    BootstrapMap.bindTo(map);
-    var scalebar = new Scalebar({
-      map: map, scalebarUnit: "dual"
-    });
-    var geocoder = new Geocoder({ 
-      map: map, autoComplete: true
-    }, "search");
-    geocoder.startup();
     map.on("update-end", function(e) {
-      if (playing) {
-        nextMap(false);
-      }
+      if (playing) nextMap(false);
     });
     map.on("load", function(e) {
       updateBasemapUI($("#mapDiv").data("basemap"));
@@ -33,40 +24,49 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", "http://esri.
     map.on("basemap-change", function(e) {
       updateBasemapUI(e.current.basemapName);
     });
+    BootstrapMap.bindTo(map);
+    var scalebar = new Scalebar({ map: map, scalebarUnit: "dual" });
+    var geocoder = new Geocoder({ map: map, autoComplete: true }, "search");
+    geocoder.startup();
+    geocoder.on("select", function (e) { 
+      pauseTour();
+    });
     // Functions
     function updateBasemapUI(basemapType) {
-      $("#navbar li").removeClass("active");
-      $("#navbar li[data-basemap='" + basemapType + "']").addClass("active");
+      $("#navbar li").removeClass("active").
+        filter("[data-basemap='" + basemapType + "']").addClass("active");
     }
     function showCountdown(secondsLeft) {
       secondsLeft===""?$("#start-countdown").hide():$("#start-countdown").show();
       $("#start-countdown").text("" + secondsLeft);
     }
+    function resetCountdown() {
+      sec = countDown;
+      showCountdown(played?sec:"");
+    }
     function nextMap(startUp) {
       clearInterval(secTimer);
-      if (startUp) { // updated immediately
-        if (playing) {
-          showBasemap(index);
-        }
-        showCountdown(sec); 
+      if (startUp && !played) {
+        played = true;
+        showBasemap(index);
       }
       secTimer = setInterval (function() {
-        sec--;
-        if (sec == 0) {
+        if (--sec == 0) {
           index = (index < (mapLocations.length - 1) ? (index + 1) : 0);
           showBasemap(index);
-          sec = countDown;
+          resetCountdown();
         }
         showCountdown(sec);
       }, 1000);
     }
     function toggleTour() {
-      $("#start-glyph").toggleClass("glyphicon-pause glyphicon-play"); 
       clearInterval(secTimer);
-      if (!playing) {
-        nextMap(true);
-      }
+      $("#start-glyph").toggleClass("glyphicon-pause glyphicon-play"); 
+      if (!playing) nextMap(true);
       playing = !playing;
+    }
+    function pauseTour() {
+      if (playing) toggleTour();
     }
     function setBasemap(basemapType) {
       clearInterval(secTimer);
@@ -75,14 +75,14 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder", "http://esri.
     function showBasemap(index) { // set map and location
       setBasemap(mapLocations[index][0]);
       map.centerAndZoom(mapLocations[index][1],mapLocations[index][2]);
+      resetCountdown();
     }
     $(document).ready(function() {
       $("#navbar li").click(function(e) {
-        if (playing) {
-          toggleTour(); // Stop playing
-        }
-        setBasemap(e.target.parentElement.dataset.basemap); // Set the basemap
-        index = $("#navbar li").index($("#navbar li[data-basemap='" + e.target.parentElement.dataset.basemap +"']"));
+        pauseTour();
+        var basemapType = e.target.parentElement.dataset.basemap;
+        setBasemap(basemapType); // Set the basemap
+        index = $("#navbar li").index($("#navbar li[data-basemap='" + basemapType +"']"));
         if ($(".navbar-collapse.in").length > 0) { // Hide if showing responsive menu
           $(".navbar-toggle").click();
         }
