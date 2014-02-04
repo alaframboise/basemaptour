@@ -10,31 +10,27 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder",
         ["hybrid",[-77.65,24.20],9], /* Bahamas */ ["topo",[139.75,35.69],17], // Tokyo
         ["national-geographic",[-74,40.74],12], /* New York */ ["oceans",[-160,30],3] // Pacific
       ];
-    var index = 0, countDown = 5, sec = countDown, playing = false, played = false, secTimer;
+    var index = Math.floor(Math.random()*mapLocations.length), countDown = 5, sec = countDown, 
+        playing = false, played = false, secTimer, firstLoc = mapLocations[index];
     // Map
-    var map = new Map("mapDiv",{
-      basemap:"national-geographic", center:[-122.45,37.77], zoom:12
-    });
-    map.on("update-end", function(e) {
+    var map = new Map("mapDiv", { basemap:firstLoc[0], center:firstLoc[1], zoom:firstLoc[2] });
+    map.on("update-end", function() {
       if (playing) nextMap(false);
     });
-    map.on("load", function(e) {
-      updateBasemapUI($("#mapDiv").data("basemap"));
-    });
-    map.on("basemap-change", function(e) {
-      updateBasemapUI(e.current.basemapName);
-    });
-    BootstrapMap.bindTo(map);
+    map.on("load", updateBasemapUI);
+    map.on("basemap-change", updateBasemapUI);
     var scalebar = new Scalebar({ map: map, scalebarUnit: "dual" });
     var geocoder = new Geocoder({ map: map, autoComplete: true }, "search");
     geocoder.startup();
-    geocoder.on("select", function (e) { 
-      pauseTour();
+    geocoder.on("select", pauseTour);
+    geocoder.on("click", function(e) {
+      console.debug("Clicked!");
     });
+    BootstrapMap.bindTo(map);
     // Functions
-    function updateBasemapUI(basemapType) {
+    function updateBasemapUI () {
       $("#navbar li").removeClass("active").
-        filter("[data-basemap='" + basemapType + "']").addClass("active");
+        filter("[data-basemap='" + $("#mapDiv")[0].dataset.basemap + "']").addClass("active");
     }
     function showCountdown(secondsLeft) {
       secondsLeft===""?$("#start-countdown").hide():$("#start-countdown").show();
@@ -87,13 +83,11 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder",
           $(".navbar-toggle").click();
         }
       });
-      $("#start").click(function(){
-        toggleTour();
-      });
-      $("#forward").click(function(e){
+      $("#start").click(toggleTour);
+      $("#forward").click(function(){
         showBasemap(index = index === mapLocations.length - 1 ? 0 : index + 1);
       });
-      $("#backward").click(function(e){
+      $("#backward").click(function(){
         showBasemap(index = index === 0 ? mapLocations.length - 1 : index - 1);
       });
   });
