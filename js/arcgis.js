@@ -23,9 +23,6 @@ require(["esri/map", "esri/dijit/Scalebar", "esri/dijit/Geocoder",
     var geocoder = new Geocoder({ map: map, autoComplete: true }, "search");
     geocoder.startup();
     geocoder.on("select", pauseTour);
-    geocoder.on("click", function(e) {
-      console.debug("Clicked!");
-    });
     BootstrapMap.bindTo(map);
     // Functions
     function updateBasemapUI () {
